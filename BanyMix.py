@@ -12,21 +12,11 @@ MUJERES_COUNT = 6 # Consumers
 MAX_PERSONAS = 3
 MAX_REPEATS_WC = 2
 
-nomHombres = ["Paco", "Ruben", "Mario", "Jorge", "Gary", "Peter"]
-nomMujeres = ["Sofia", "Karen", "Mercedes", "Paula", "Carlota", "Sara"]
-
 WC = [] #Buffer
 
 mutex = threading.Lock() #Semaforo de exclusion mutua
 WC_noLleno = threading.Semaphore(MAX_PERSONAS) #Semaforo contador de personas dentro
 
-def random_line(afile):
-    line = next(afile)
-    for num, aline in enumerate(afile, 2):
-        if random.randrange(num):
-            continue
-        line = aline
-    return line
 class Hombre (threading.Thread):
     
     nombre = ""
@@ -82,8 +72,6 @@ class Mujer (threading.Thread):
     def __init__(self):
         super().__init__()
         self.nombre = random.choice(list(open("FEMALE_NAMES", encoding="utf8"))).split("\n")[0]
-        
-    
 
     def presentacion(self):
         print(f"{self.nombre.upper()} llega a la oficina")
