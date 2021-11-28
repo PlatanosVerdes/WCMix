@@ -1,0 +1,9 @@
+#+title: Practica 1 Concurrente: Baño unisex
+
+#+HTML:<a href="https://www.uib.eu//"><img alt="UIB logo" height="160" align = "left" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Escut_UIB.svg/1058px-Escut_UIB.svg.png"></a>
+En un despacho de abogados trabajan 6 mujers y 6 hombres y solo hay un baño mixto,. El director ha puesto las siguientes normas:
+- Dentro del baño no puede haber al mismo tiempo hombres y mujeres
+- Como máximo puede haber 3 personas en el baño
+- Durante la jornada laboral van al baño 2 veces
+
+Implementar una simulación en [[https://www.java.com/en/][Java]] o [[https://www.python.org/][Python]] usando semáforos como única herramienta de sincronía 
