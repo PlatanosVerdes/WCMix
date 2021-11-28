@@ -20,14 +20,20 @@ WC = [] #Buffer
 mutex = threading.Lock() #Semaforo de exclusion mutua
 WC_noLleno = threading.Semaphore(MAX_PERSONAS) #Semaforo contador de personas dentro
 
-
+def random_line(afile):
+    line = next(afile)
+    for num, aline in enumerate(afile, 2):
+        if random.randrange(num):
+            continue
+        line = aline
+    return line
 class Hombre (threading.Thread):
     
     nombre = ""
     vecesWC = 0
     def __init__(self):
         super().__init__()
-        self.nombre = nomHombres.pop()
+        self.nombre = random.choice(list(open("MALE_NAMES", encoding="utf8"))).split("\n")[0]
     
     def presentacion(self):
         print(f"{self.nombre.upper()} llega a la oficina")
@@ -75,7 +81,9 @@ class Mujer (threading.Thread):
     vecesWC = 0
     def __init__(self):
         super().__init__()
-        self.nombre = nomMujeres.pop()
+        self.nombre = random.choice(list(open("FEMALE_NAMES", encoding="utf8"))).split("\n")[0]
+        
+    
 
     def presentacion(self):
         print(f"{self.nombre.upper()} llega a la oficina")
