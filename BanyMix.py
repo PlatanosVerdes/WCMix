@@ -38,10 +38,13 @@ class Hombre (threading.Thread):
         sleep(randint(1,5))
 
     def ir_WC(self):
-        global WC
+        global WC, COUNTER_WC_HOMBRES
 
+        with mutexHombres:
+            COUNTER_WC_HOMBRES = COUNTER_WC_HOMBRES + 1
+                    
         WC_noLleno.acquire()
-        with mutex:
+        with mutex: # Entrar al baño
             WC.append(self)
         self.vecesWC = self.vecesWC + 1
 
@@ -49,7 +52,8 @@ class Hombre (threading.Thread):
         sleep(randint(1,2))
         print(f"{self.nombre.upper()} sale del baño")
         
-        with mutex:
+        #Habria que cambiar esto
+        with mutex: # Salir del baño
             WC.pop(WC.index(self))
             print(len(WC))
             if len(WC) == 0:
