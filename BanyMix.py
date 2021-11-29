@@ -7,15 +7,20 @@ from random import randint # generar un int aleatorio
 from time import sleep     # esperar
 import random
 
-HOMBRES_COUNT = 6 # Consumers
-MUJERES_COUNT = 6 # Consumers
+HOMBRES_COUNT_OFFICE = 6 # Consumers
+MUJERES_COUNT_OFFICE = 6 # Consumers
 MAX_PERSONAS = 3
 MAX_REPEATS_WC = 2
+
+COUNTER_WC_HOMBRES = 0
+COUNTER_WC_MUJERES = 0
 
 WC = [] #Buffer
 
 mutex = threading.Lock() #Semaforo de exclusion mutua
 WC_noLleno = threading.Semaphore(MAX_PERSONAS) #Semaforo contador de personas dentro
+mutexHombres = threading.Lock() #Semaforo para contador hombres
+mutexMujeres = threading.Lock() #Semaforo para contador mujeres
 
 class Hombre (threading.Thread):
     
@@ -118,10 +123,10 @@ def main():
     personas = []
     
     # Generacion de procesos 
-    for i in range(HOMBRES_COUNT):
+    for i in range(HOMBRES_COUNT_OFFICE):
         personas.append(Hombre())
     
-    for i in range(MUJERES_COUNT):
+    for i in range(MUJERES_COUNT_OFFICE):
         personas.append(Mujer())
 
     random.shuffle(personas)
