@@ -3,24 +3,20 @@
 #Un semaforo mutex hombres/mujeres
 
 import threading
-from random import randint # generar un int aleatorio
-from time import sleep     # esperar
+from random import randint # Generar un int aleatorio
+from time import sleep     # Esperar
 import random
 
-HOMBRES_COUNT_OFFICE = 6 # Consumers
-MUJERES_COUNT_OFFICE = 6 # Consumers
+HOMBRES_COUNT_OFFICE = 6 
+MUJERES_COUNT_OFFICE = 6 
 MAX_PERSONAS = 3
 MAX_REPEATS_WC = 2
 
 COUNTER_WC_HOMBRES = 0
 COUNTER_WC_MUJERES = 0
 
-WC = [] #Buffer
-
-mutex = threading.Lock() #Semaforo de exclusion mutua
-WC_noLleno = threading.Semaphore(MAX_PERSONAS) #Semaforo contador de personas dentro
-mutexHombres = threading.Lock() #Semaforo para contador hombres
-mutexMujeres = threading.Lock() #Semaforo para contador mujeres
+mutexHombres = threading.Lock() # Modificar el contador de los hombres
+mutexMujeres = threading.Lock() # Modificar el contador de las mujeres
 
 class Hombre (threading.Thread):
     
@@ -38,42 +34,20 @@ class Hombre (threading.Thread):
         sleep(randint(1,5))
 
     def ir_WC(self):
-        global WC, COUNTER_WC_HOMBRES
+        print("Hola")
 
-        with mutexHombres:
-            COUNTER_WC_HOMBRES = COUNTER_WC_HOMBRES + 1
-                    
-        WC_noLleno.acquire()
-        with mutex: # Entrar al baño
-            WC.append(self)
-        self.vecesWC = self.vecesWC + 1
-
-        print(f"{self.nombre.upper()} va al baño {self.vecesWC}/2")
-        sleep(randint(1,2))
-        print(f"{self.nombre.upper()} sale del baño")
-        
-        #Habria que cambiar esto
-        with mutex: # Salir del baño
-            WC.pop(WC.index(self))
-            print(len(WC))
-            if len(WC) == 0:
-                print("*** El baño esta vacio ***")
-
-        WC_noLleno.release()
-        
     def despedida(self):
         print(f"{self.nombre.upper()} acaba el trabajo")
         
     def run(self):
         self.presentacion()
         self.trabajar()
-        self.ir_WC()
-        self.trabajar()
-        self.ir_WC()
-        self.trabajar()
+        while(self.vecesWC != MAX_REPEATS_WC): # Mientras tenga que ir al baño
+            self.ir_WC()
+            self.trabajar()
+            self.vecesWC = self.vecesWC + 1
         self.despedida()
-
-
+    
 class Mujer (threading.Thread):
     
     nombre = ""
@@ -90,38 +64,19 @@ class Mujer (threading.Thread):
         sleep(randint(1,5))
 
     def ir_WC(self):
-        global WC
+        print("Hola")
 
-        WC_noLleno.acquire()
-
-        with mutex:
-            WC.append(self)
-
-        self.vecesWC = self.vecesWC + 1
-        print(f"{self.nombre.upper()} va al baño {self.vecesWC}/2")
-        sleep(randint(1,2))
-        print(f"{self.nombre.upper()} sale del baño")
-        
-        with mutex:
-            WC.pop(WC.index(self))
-            print(len(WC))
-            if len(WC) == 0:
-                print("*** El baño esta vacio ***")
-
-        WC_noLleno.release()
-        
     def despedida(self):
         print(f"{self.nombre.upper()} acaba el trabajo")
 
     def run(self):
         self.presentacion()
         self.trabajar()
-        self.ir_WC()
-        self.trabajar()
-        self.ir_WC()
-        self.trabajar()
+        while(self.vecesWC != MAX_REPEATS_WC): # Mientras tenga que ir al baño
+            self.ir_WC()
+            self.trabajar()
+            self.vecesWC = self.vecesWC + 1
         self.despedida()
-
 
 def main():
     personas = []
@@ -133,6 +88,7 @@ def main():
     for i in range(MUJERES_COUNT_OFFICE):
         personas.append(Mujer())
 
+    # Randomizamos el "orden" de entrada
     random.shuffle(personas)
 
     # Iniciamos todos los procesos
@@ -148,5 +104,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# []
