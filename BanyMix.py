@@ -37,20 +37,22 @@ class Hombre (threading.Thread):
 
     def ir_WC(self):
         global MAX_REPEATS_WC, COUNTER_WC_HOMBRES, COUNTER_WC_MUJERES, MAX_PERSONAS, WAITING_ROOM_GENERE
-        print(f"{self.nombre.upper()} va al baño {self.vecesWC+1}/{MAX_REPEATS_WC}")
+        #print(f"{self.nombre.upper()} va al baño {self.vecesWC+1}/{MAX_REPEATS_WC}")
     #Pre-protocolo 
 
         # Sala de espera ¿Hay gente en el baño? Lock 
         waiting_room.acquire() 
 
         WAITING_ROOM_GENERE = type(self).__name__  # Determinamos el tipo el genero del a persona en la sala de espera
-
+        #print(f"El baño es de: {WAITING_ROOM_GENERE}. Dicho por {self.nombre.upper()}")
+        
         access_WC.acquire() # Espero hasta que pueda entrar al baño
         
         SCHombres.acquire() # Esperamos hasta que el baño tenga sitio
         # Aumentar contador del baño del genero pertinente variable
         with mutexHombres:
             COUNTER_WC_HOMBRES = COUNTER_WC_HOMBRES + 1
+            print(f"{self.nombre.upper()} entra {self.vecesWC+1}/{MAX_REPEATS_WC}. {type(self).__name__} en el baño: {COUNTER_WC_HOMBRES}")
         
         waiting_room.release()      # "Abrir puerta de sala de espera"
         if (WAITING_ROOM_GENERE == type(self).__name__): # Si nos sigue un hombre y hay espacio en el baño
@@ -58,7 +60,7 @@ class Hombre (threading.Thread):
             access_WC.release()
 
     #Protocolo
-        # Estamos en el baño 
+        # Estamos en el baño
         sleep(randint(1,5)) # Necesidades
             
     #Post-protocolo
@@ -68,7 +70,7 @@ class Hombre (threading.Thread):
         # Decrementar contador del baño del genero pertinente Semaforo 
         with mutexHombres:
             COUNTER_WC_HOMBRES = COUNTER_WC_HOMBRES - 1
-            print(f"Counter Hombres: {COUNTER_WC_HOMBRES}")
+            #print(f"Counter Hombres: {COUNTER_WC_HOMBRES}")
             if (COUNTER_WC_HOMBRES == 0): # El baño esta vacio para todos
                 print("*** El baño está vacio ***")
                 access_WC.release()
@@ -103,13 +105,14 @@ class Mujer (threading.Thread):
 
     def ir_WC(self):
         global MAX_REPEATS_WC, COUNTER_WC_MUJERES, COUNTER_WC_MUJERES, MAX_PERSONAS, WAITING_ROOM_GENERE
-        print(f"{self.nombre.upper()} va al baño {self.vecesWC+1}/{MAX_REPEATS_WC}")
+        #print(f"{self.nombre.upper()} va al baño {self.vecesWC+1}/{MAX_REPEATS_WC}")
     #Pre-protocolo 
 
         # Sala de espera ¿Hay gente en el baño? Lock 
         waiting_room.acquire() 
 
         WAITING_ROOM_GENERE = type(self).__name__  # Determinamos el tipo el genero del a persona en la sala de espera
+        #print(f"El baño es de: {WAITING_ROOM_GENERE}. Dicho por {self.nombre.upper()}")
 
         access_WC.acquire() # Espero hasta que pueda entrar al baño
         
@@ -117,6 +120,7 @@ class Mujer (threading.Thread):
         # Aumentar contador del baño del genero pertinente variable
         with mutexMujeres:
             COUNTER_WC_MUJERES = COUNTER_WC_MUJERES + 1
+            print(f"{self.nombre.upper()} entra {self.vecesWC+1}/{MAX_REPEATS_WC}. {type(self).__name__} en el baño: {COUNTER_WC_MUJERES}")
         
         waiting_room.release()      # "Abrir puerta de sala de espera"
         if (WAITING_ROOM_GENERE == type(self).__name__): # Si nos sigue un hombre y hay espacio en el baño
@@ -124,7 +128,7 @@ class Mujer (threading.Thread):
             access_WC.release()
 
     #Protocolo
-        # Estamos en el baño 
+        # Estamos en el baño
         sleep(randint(1,5)) # Necesidades
             
     #Post-protocolo
@@ -135,7 +139,7 @@ class Mujer (threading.Thread):
 
         with mutexMujeres:
             COUNTER_WC_MUJERES = COUNTER_WC_MUJERES - 1
-            print(f"Counter mujeres: {COUNTER_WC_MUJERES}")
+            #print(f"Counter mujeres: {COUNTER_WC_MUJERES}")
             if (COUNTER_WC_MUJERES == 0): # El baño esta vacio para todos
                 print("*** El baño está vacio ***")
                 access_WC.release()
