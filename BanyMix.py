@@ -2,6 +2,7 @@ import threading
 from random import randint                    # Generar un int aleatorio
 from time import sleep                        # Esperar
 import random                                 # Generación de números aleatorios
+from sty import fg, ef, rs                    # Salida colorida 
 
 HOMBRES_COUNT_OFFICE = 3                      # Cantidad de hombres en la oficina
 MUJERES_COUNT_OFFICE = 3                      # Cantidad de mujeres en la oficina
@@ -21,6 +22,10 @@ SCMujeres = threading.Semaphore(MAX_PERSONAS) # Semáforo contador para las muje
 waiting_room = threading.Lock()               # Sala de espera
 access_WC = threading.Lock()                  # Acceso al baño 
 
+
+def prwoman(skk): return fg(201) + f"{skk}" + fg.rs
+def prman(skk): return fg.cyan + f"{skk}" + fg.rs
+
 class Hombre (threading.Thread):
     
     nombre = ""
@@ -30,15 +35,14 @@ class Hombre (threading.Thread):
         self.nombre = random.choice(list(open("MALE_NAMES", encoding="utf8"))).split("\n")[0]
     
     def presentacion(self):
-        print(f"{self.nombre.upper()} llega a la oficina")
+        print(prman(self.nombre.upper()) + " llega a la oficina")
     
     def trabajar(self):
-        print(f"{self.nombre.upper()} trabaja")
+        print(prman(self.nombre.upper()) + " trabaja")
         sleep(randint(1,5))
 
     def ir_WC(self):
         global counter_wc_hombres
-        #print(f"{self.nombre.upper()} va al baño {self.vecesWC+1}/{MAX_REPEATS_WC}")
 
     #Pre-protocolo 
 
@@ -54,7 +58,7 @@ class Hombre (threading.Thread):
         # Aumentar contador del baño del genero pertinente variable
         with mutexHombres:
             counter_wc_hombres = counter_wc_hombres + 1
-            print(f"{self.nombre.upper()} entra {self.vecesWC+1}/{MAX_REPEATS_WC}. {type(self).__name__} en el baño: {counter_wc_hombres}")
+            print(prman(self.nombre.upper()) + f" entra {self.vecesWC+1}/{MAX_REPEATS_WC}. {type(self).__name__} en el baño: {counter_wc_hombres}")
         
         waiting_room.release()      # "Abrir puerta de sala de espera"
 
@@ -65,18 +69,17 @@ class Hombre (threading.Thread):
     #Post-protocolo
         # Decrementar contador del baño del genero pertinente variable
         SCHombres.release()
-        print(f"{self.nombre.upper()} sale del baño")
+        print(prman(self.nombre.upper()) +" sale del baño")
         # Decrementar contador del baño del genero pertinente Semaforo 
         with mutexHombres:
             counter_wc_hombres = counter_wc_hombres - 1
-            #print(f"Counter Hombres: {COUNTER_WC_HOMBRES}")
             if (counter_wc_hombres == 0): # El baño esta vacio para todos
-                print("*** El baño está vacio ***")
+                print(ef.italic + "*** El baño está vacio ***" + rs.italic + "\n")
                 access_WC.release()
 
 
     def despedida(self):
-        print(f"{self.nombre.upper()} acaba el trabajo")
+        print(prman(self.nombre.upper()) +" acaba el trabajo")
         
     def run(self):
         self.presentacion()
@@ -86,20 +89,17 @@ class Hombre (threading.Thread):
             self.trabajar()
             self.vecesWC = self.vecesWC + 1
         self.despedida()
-    
 class Mujer (threading.Thread):
-    
     nombre = ""
     vecesWC = 0
     def __init__(self):
         super().__init__()
         self.nombre = random.choice(list(open("FEMALE_NAMES", encoding="utf8"))).split("\n")[0]
-
     def presentacion(self):
-        print(f"{self.nombre.upper()} llega a la oficina")
+        print(prwoman(self.nombre.upper()) +" llega a la oficina")
     
     def trabajar(self):
-        print(f"{self.nombre.upper()} trabaja")
+        print(prwoman(self.nombre.upper()) +" trabaja")
         sleep(randint(1,5))
 
     def ir_WC(self):
@@ -119,7 +119,7 @@ class Mujer (threading.Thread):
         # Aumentar contador del baño del genero pertinente variable
         with mutexMujeres:
             counter_wc_mujeres = counter_wc_mujeres + 1
-            print(f"{self.nombre.upper()} entra {self.vecesWC+1}/{MAX_REPEATS_WC}. {type(self).__name__} en el baño: {counter_wc_mujeres}")
+            print(prwoman(self.nombre.upper()) + f" entra {self.vecesWC+1}/{MAX_REPEATS_WC}. {type(self).__name__} en el baño: {counter_wc_mujeres}")
         
         waiting_room.release()      # "Abrir puerta de sala de espera"
 
@@ -131,17 +131,16 @@ class Mujer (threading.Thread):
         # Decrementar contador del baño del genero pertinente variable
         SCMujeres.release()
         # Decrementar contador del baño del genero pertinente Semaforo 
-        print(f"{self.nombre.upper()} sale del baño")
+        print(prwoman(self.nombre.upper()) +" sale del baño")
 
         with mutexMujeres:
             counter_wc_mujeres = counter_wc_mujeres - 1
-            #print(f"Counter mujeres: {COUNTER_WC_MUJERES}")
             if (counter_wc_mujeres == 0): # El baño esta vacio para todos
-                print("*** El baño está vacio ***")
+                print(ef.italic + "*** El baño está vacio ***" + rs.italic + "\n")
                 access_WC.release()
 
     def despedida(self):
-        print(f"{self.nombre.upper()} acaba el trabajo")
+        print(prwoman(self.nombre.upper()) +" acaba el trabajo")
 
     def run(self):
         self.presentacion()
