@@ -2,16 +2,15 @@ import threading
 from random import randint                    # Generar un int aleatorio
 from time import sleep                        # Esperar
 import random                                 # Generación de números aleatorios
-from sty import fg, ef, rs                    # Salida colorida 
+from sty import fg, ef, rs                    # Salida colorida 5
 
-HOMBRES_COUNT_OFFICE = 3                      # Cantidad de hombres en la oficina
-MUJERES_COUNT_OFFICE = 3                      # Cantidad de mujeres en la oficina
+HOMBRES_COUNT_OFFICE = 6                      # Cantidad de hombres en la oficina
+MUJERES_COUNT_OFFICE = 6                      # Cantidad de mujeres en la oficina
 MAX_PERSONAS = 3                              # Cantidad de personas concurrentes en el baño
 MAX_REPEATS_WC = 2                            # Veces que cada persona puede ir al baño 
 
 counter_wc_hombres = 0                        # Cantidad de hombres en el baño 
 counter_wc_mujeres = 0                        # Cantidad de mujeres en el baño 
-WAITING_ROOM_GENERE = ""                      # Identifica el genero de la persona en la sala de espera 
 
 mutexHombres = threading.Lock()               # Modificar el contador de los hombres
 mutexMujeres = threading.Lock()               # Modificar el contador de las mujeres
@@ -21,7 +20,6 @@ SCMujeres = threading.Semaphore(MAX_PERSONAS) # Semáforo contador para las muje
 
 waiting_room = threading.Lock()               # Sala de espera
 access_WC = threading.Lock()                  # Acceso al baño 
-
 
 def prwoman(skk): return fg(201) + f"{skk}" + fg.rs
 def prman(skk): return fg.cyan + f"{skk}" + fg.rs
@@ -89,6 +87,7 @@ class Hombre (threading.Thread):
             self.trabajar()
             self.vecesWC = self.vecesWC + 1
         self.despedida()
+
 class Mujer (threading.Thread):
     nombre = ""
     vecesWC = 0
