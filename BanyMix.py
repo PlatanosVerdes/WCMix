@@ -65,12 +65,15 @@ class Hombre (threading.Thread):
         sleep(randint(1,5)) # Necesidades
             
     #Post-protocolo
+        # Evitar display "Hay 4 hombres en el baño"
+        with mutexHombres:
+            counter_wc_hombres = counter_wc_hombres - 1
+        
         # Decrementar contador del baño del genero pertinente variable
         SCHombres.release()
         print(prman(self.nombre.upper()) +" sale del baño")
         # Decrementar contador del baño del genero pertinente Semaforo 
         with mutexHombres:
-            counter_wc_hombres = counter_wc_hombres - 1
             if (counter_wc_hombres == 0): # El baño esta vacio para todos
                 print(ef.italic + "*** El baño está vacio ***" + rs.italic + "\n")
                 access_WC.release()
@@ -127,13 +130,15 @@ class Mujer (threading.Thread):
         sleep(randint(1,5)) # Necesidades
             
     #Post-protocolo
+        # Evitar error de display "hay 4 mujeres en el baño"
+        with mutexMujeres:
+            counter_wc_mujeres = counter_wc_mujeres - 1
         # Decrementar contador del baño del genero pertinente variable
         SCMujeres.release()
         # Decrementar contador del baño del genero pertinente Semaforo 
         print(prwoman(self.nombre.upper()) +" sale del baño")
 
         with mutexMujeres:
-            counter_wc_mujeres = counter_wc_mujeres - 1
             if (counter_wc_mujeres == 0): # El baño esta vacio para todos
                 print(ef.italic + "*** El baño está vacio ***" + rs.italic + "\n")
                 access_WC.release()
