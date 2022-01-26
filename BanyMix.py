@@ -1,3 +1,6 @@
+# Jorge González Pascual & rubén Palmer Pérez
+# Video: https://youtu.be/O_fL50CRs1I 
+
 import threading
 from random import randint                    # Generar un int aleatorio
 from time import sleep                        # Esperar
@@ -97,6 +100,7 @@ class Mujer (threading.Thread):
     def __init__(self):
         super().__init__()
         self.nombre = random.choice(list(open("FEMALE_NAMES", encoding="utf8"))).split("\n")[0]
+
     def presentacion(self):
         print(prwoman(self.nombre.upper()) +" llega a la oficina")
     
